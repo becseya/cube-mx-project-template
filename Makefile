@@ -37,13 +37,14 @@ download-firmware: ${FLAG_FW_DOWNLOADED}
 # ---------------------------------------------------------------------------------------------------------------------
 
 src-make: ${FLAG_FW_DOWNLOADED}
-	make -C "${DIR_SRC}"
+	make -C "${DIR_SRC}" -f app.mk
+	make -C "${DIR_SRC}" -f overlay.mk
 
 ${ELF_FILE}: src-make
 ${BIN_FILE}: src-make
 
 clean:
-	make -C "${DIR_SRC}" clean
+	make -C "${DIR_SRC}" -f overlay.mk clean
 
 # ---------------------------------------------------------------------------------------------------------------------
 
