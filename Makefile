@@ -18,6 +18,13 @@ all: src-make
 
 # ---------------------------------------------------------------------------------------------------------------------
 
+ifneq (${DIR_CUBE_PROGRAMMER},)
+export PATH := ${DIR_CUBE_PROGRAMMER}/bin:${PATH}
+endif
+
+check-programmer:
+	@STM32_Programmer_CLI --version >/dev/null 2>&1 || (echo "Flasher utility not found. Please add it to your PATH or set 'DIR_CUBE_PROGRAMMER' environmental variable" && false)
+
 ${FLAG_FW_DOWNLOADED}:
 	@rm -rf "${DIR_FW}" && mkdir -p "${DIR_FW}"
 	git clone git@github.com:STMicroelectronics/STM32Cube${MCU_FAMILY}.git --depth=1 ${DIR_FW}
@@ -27,6 +34,8 @@ ${FLAG_FW_DOWNLOADED}:
 
 download-firmware: ${FLAG_FW_DOWNLOADED}
 
+# ---------------------------------------------------------------------------------------------------------------------
+
 src-make: ${FLAG_FW_DOWNLOADED}
 	make -C "${DIR_SRC}"
 
@@ -35,5 +44,13 @@ ${BIN_FILE}: src-make
 
 clean:
 	make -C "${DIR_SRC}" clean
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+flash: check-programmer ${ELF_FILE}
+	STM32_Programmer_CLI -c port=SWD mode=UR -w ${ELF_FILE} 0x8000000 -v -rst
+
+flash-rst: check-programmer
+	STM32_Programmer_CLI -c port=SWD mode=UR -rst > /dev/null
 
 print-%  : ; @echo $($*)

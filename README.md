@@ -14,3 +14,26 @@ This is a template repository for setting up an embedded project with Cube MX an
 - Goto CubeMX, _File_ -> _Load Project_, and load __project.ioc__
 - Click _Generate_
 - Call `make` from the repo
+
+# Dev environment
+If you have ST's CubeProgrammer installed, You can flash your target with `make flash`.
+Install location must be added to `PATH` or specified by `DIR_CUBE_PROGRAMMER` environment variable.
+
+# Documentation
+
+I don't have time to write proper documentation at the moment, the workings can be reverse-engineered from the Makefiles. In the meantime, I recommend [this article](https://www.e-tinkers.com/2022/04/a-better-way-to-setup-stm32cubeide/) whose author probably had similar goals in his mind as me.
+
+## Troubleshooting
+
+### Symptom
+
+Error messages referencing USB connection when flashing the device.
+
+### Solution
+
+```
+echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", MODE="0666"' | sudo tee /etc/udev/rules.d/70-st-link.rules
+echo 'SUBSYSTEMS=="usb_device", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", MODE="0666"' | sudo tee /etc/udev/rules.d/70-st-link.rules
+reboot
+```
+__Note:__ `idProduct` might differ in your case, use `lsusb` to find out the value for your particular device.
