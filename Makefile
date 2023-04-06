@@ -37,6 +37,7 @@ download-firmware: ${FLAG_FW_DOWNLOADED}
 # ---------------------------------------------------------------------------------------------------------------------
 
 src-make: ${FLAG_FW_DOWNLOADED}
+	test -f "${DIR_SRC}/Makefile" || (echo "Cube MX generation must be run first" && false)
 	make -C "${DIR_SRC}" -f app.mk
 	make -C "${DIR_SRC}" -f overlay.mk
 
