@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/Inc",
+                "${workspaceFolder}/cube-mx-fw/Drivers/**",
+                "${workspaceFolder}/cube-mx-fw/Drivers/CMSIS/Device/ST/**",
+                "${workspaceFolder}/cube-mx-fw/Drivers/CMSIS/Include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
