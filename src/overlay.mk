@@ -1,4 +1,6 @@
 include Makefile
 
-LDFLAGS += -static -L./build -l_app --specs=nosys.specs
-C_INCLUDES += -Iapp
+LDFLAGS += ${EXTRA_LDFLAGS}
+C_INCLUDES += ${EXTRA_C_INCUDES}
+
+print-%  : ; @echo $($*)

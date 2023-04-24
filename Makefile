@@ -3,6 +3,7 @@
 PROJECT_NAME ?= project
 
 DIR_SRC = ./src
+DIR_APP = ./app
 DIR_BUILD = ${DIR_SRC}/build
 
 MCU_FAMILY ?= $(shell cat ${DIR_SRC}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
@@ -13,6 +14,8 @@ FLAG_FW_DOWNLOADED = ${DIR_FW}/.flag-fw-${MCU_FAMILY}-downloaded
 
 ELF_FILE = ${DIR_BUILD}/${PROJECT_NAME}.elf
 BIN_FILE = ${DIR_BUILD}/${PROJECT_NAME}.bin
+
+OVARLAY_ARGS = "EXTRA_C_INCUDES=-I../app" "EXTRA_LDFLAGS=-static -L./../app/build -l_app --specs=nosys.specs"
 
 all: src-make
 
@@ -38,13 +41,16 @@ download-firmware: ${FLAG_FW_DOWNLOADED}
 
 src-make: ${FLAG_FW_DOWNLOADED}
 	test -f "${DIR_SRC}/Makefile" || (echo "Cube MX generation must be run first" && false)
-	make -C "${DIR_SRC}" -f app.mk
-	make -C "${DIR_SRC}" -f overlay.mk
+	make -C "${DIR_APP}"
+#re-trigger linking
+	touch "${DIR_SRC}/Src/main.c"
+	make -C "${DIR_SRC}" -f overlay.mk ${OVARLAY_ARGS}
 
 ${ELF_FILE}: src-make
 ${BIN_FILE}: src-make
 
 clean:
+	make -C "${DIR_APP}" clean
 	make -C "${DIR_SRC}" -f overlay.mk clean
 
 # ---------------------------------------------------------------------------------------------------------------------
