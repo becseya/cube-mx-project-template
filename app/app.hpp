@@ -8,3 +8,4 @@
 
 APP_EXTERN void app_init();
 APP_EXTERN void app_loop();
+APP_EXTERN void irq_timer_1();
