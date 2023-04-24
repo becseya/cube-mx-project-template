@@ -15,7 +15,7 @@ FLAG_FW_DOWNLOADED = ${DIR_FW}/.flag-fw-${MCU_FAMILY}-downloaded
 ELF_FILE = ${DIR_BUILD}/${PROJECT_NAME}.elf
 BIN_FILE = ${DIR_BUILD}/${PROJECT_NAME}.bin
 
-OVARLAY_ARGS = "EXTRA_C_INCUDES=-I../app" "EXTRA_LDFLAGS=-static -L./../app/build -l_app --specs=nosys.specs"
+OVARLAY_ARGS = "EXTRA_C_INCUDES=-I../app" "EXTRA_LDFLAGS=--specs=nosys.specs" "EXTRA_OBJECTS=../app/build/lib_app.a"
 
 all: src-make
 
@@ -42,8 +42,6 @@ download-firmware: ${FLAG_FW_DOWNLOADED}
 src-make: ${FLAG_FW_DOWNLOADED}
 	test -f "${DIR_SRC}/Makefile" || (echo "Cube MX generation must be run first" && false)
 	make -C "${DIR_APP}"
-#re-trigger linking
-	touch "${DIR_SRC}/Src/main.c"
 	make -C "${DIR_SRC}" -f overlay.mk ${OVARLAY_ARGS}
 
 ${ELF_FILE}: src-make
