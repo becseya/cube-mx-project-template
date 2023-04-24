@@ -2,11 +2,11 @@
 
 PROJECT_NAME ?= project
 
-DIR_SRC = ./src
+DIR_GENERATED = ./generated
 DIR_APP = ./app
-DIR_BUILD = ${DIR_SRC}/build
+DIR_BUILD = ${DIR_GENERATED}/build
 
-MCU_FAMILY ?= $(shell cat ${DIR_SRC}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
+MCU_FAMILY ?= $(shell cat ${DIR_GENERATED}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
 
 DIR_FW = ./cube-mx-fw
 
@@ -40,16 +40,16 @@ download-firmware: ${FLAG_FW_DOWNLOADED}
 # ---------------------------------------------------------------------------------------------------------------------
 
 src-make: ${FLAG_FW_DOWNLOADED}
-	test -f "${DIR_SRC}/Makefile" || (echo "Cube MX generation must be run first" && false)
+	test -f "${DIR_GENERATED}/Makefile" || (echo "Cube MX generation must be run first" && false)
 	make -C "${DIR_APP}"
-	make -C "${DIR_SRC}" -f overlay.mk ${OVARLAY_ARGS}
+	make -C "${DIR_GENERATED}" -f overlay.mk ${OVARLAY_ARGS}
 
 ${ELF_FILE}: src-make
 ${BIN_FILE}: src-make
 
 clean:
 	make -C "${DIR_APP}" clean
-	make -C "${DIR_SRC}" -f overlay.mk clean
+	make -C "${DIR_GENERATED}" -f overlay.mk clean
 
 # ---------------------------------------------------------------------------------------------------------------------
 
