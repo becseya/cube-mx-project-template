@@ -1,30 +1,24 @@
 #include "app.hpp"
 
+#include "blinky.hpp"
+
 #include <main.h>
 
+Blinky myBlinker(Blinky::Mode::HalfPeriod, []() -> void { //
+    LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_13);
+});
+
 extern "C" void app_init() {
-  LL_TIM_EnableCounter(TIM1);
-  LL_TIM_EnableIT_UPDATE(TIM1);
+    LL_TIM_EnableCounter(TIM1);
+    LL_TIM_EnableIT_UPDATE(TIM1);
+    LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_13);
 }
-
-#define DELAY_BLINK_SLOW 500
-#define DELAY_BLINK_FAST 100
-
-static int delay_length = DELAY_BLINK_FAST;
 
 extern "C" void app_loop() {
-  LL_GPIO_TogglePin(GPIOC, LL_GPIO_PIN_13);
-  LL_mDelay(delay_length);
-}
-
-static void toggle_delay_length() {
-  if (delay_length == DELAY_BLINK_FAST)
-    delay_length = DELAY_BLINK_SLOW;
-  else
-    delay_length = DELAY_BLINK_FAST;
+    myBlinker.update();
 }
 
 extern "C" void irq_timer_1() {
-  toggle_delay_length();
-  LL_TIM_ClearFlag_UPDATE(TIM1);
+    myBlinker.switchState();
+    LL_TIM_ClearFlag_UPDATE(TIM1);
 }
