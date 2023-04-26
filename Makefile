@@ -72,6 +72,20 @@ clean:
 	make -C "${DIR_APP}" clean
 	test -f "${DIR_GENERATED}/Makefile" && make -C "${DIR_GENERATED}" -f overlay.mk clean
 
+# Formatting ----------------------------------------------------------------------------------------------------------
+
+call-clang:
+	@clang-format --version | grep -q 'version 14.' || (echo "clang version mismatch" && exit 1)
+	@find "${DIR_APP}" -name "*.hpp" -o -name "*.cpp" | xargs clang-format ${CLANG_EXTRA_ARGS} -i
+
+format-check:
+	@! (make call-clang "CLANG_EXTRA_ARGS=--dry-run --Werror" --no-print-directory 2>&1 | grep 'error')
+	@echo "OK!"
+
+format:
+	@make call-clang --no-print-directory
+	@echo "All files formatted!"
+
 # Flasher utility -----------------------------------------------------------------------------------------------------
 
 ifneq (${DIR_CUBE_PROGRAMMER},)
