@@ -5,6 +5,8 @@ PROJECT_NAME ?= project
 DIR_ABS = $(shell realpath "$$PWD")
 DIR_GENERATED = generated
 DIR_APP = app
+DIR_TOOLS = tools
+DIR_TOOLCHAINS = ${DIR_TOOLS}/.toolchains
 DIR_FW = cube-mx-fw
 
 MCU_FAMILY ?= $(shell cat ${DIR_GENERATED}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
@@ -19,6 +21,27 @@ OVARLAY_ARGS = \
 	"OVERLAY_OBJECTS=${DIR_ABS}/${DIR_APP}/build/lib_app.a"
 
 all: app-and-generated
+
+# ARM toolchain -------------------------------------------------------------------------------------------------------
+
+DIR_ARM_TOOLCHAIN_RELATIVE = ${DIR_TOOLCHAINS}/gcc-arm-none-eabi-10.3-2021.10/bin
+
+FLAG_ARM_TOOLCHAIN = ${DIR_ARM_TOOLCHAIN_RELATIVE}/toolchain-installed
+
+TOOLCHAIN_URL = https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
+
+# To be able to update PATH variable, the folder must exists
+$(shell mkdir -p ${DIR_ARM_TOOLCHAIN_RELATIVE})
+# and must be absolute
+TOOLCHAIN = $(shell realpath ${DIR_ARM_TOOLCHAIN_RELATIVE})
+
+export PATH := ${TOOLCHAIN}:${PATH}
+
+${FLAG_ARM_TOOLCHAIN}:
+	wget -qO- "${TOOLCHAIN_URL}" | tar -xj -C "${DIR_TOOLCHAINS}"
+	touch ${FLAG_ARM_TOOLCHAIN}
+
+install-arm-toolchain: ${FLAG_ARM_TOOLCHAIN}
 
 # Build utilities -----------------------------------------------------------------------------------------------------
 
@@ -38,7 +61,7 @@ check-generation:
 
 # Final linking -------------------------------------------------------------------------------------------------------
 
-app-and-generated: ${FLAG_FW_DOWNLOADED} check-generation
+app-and-generated: download-firmware check-generation install-arm-toolchain
 	@make -C "${DIR_APP}"
 	@make -C "${DIR_GENERATED}" -f overlay.mk ${OVARLAY_ARGS}
 

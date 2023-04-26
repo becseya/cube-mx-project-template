@@ -1,4 +1,5 @@
 .mxproject
+.toolchains/
 build/
 cube-mx-fw/
 .vscode/*
