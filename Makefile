@@ -15,7 +15,11 @@ FLAG_FW_DOWNLOADED = ${DIR_FW}/.flag-fw-${MCU_FAMILY}-downloaded
 ELF_FILE = ${DIR_BUILD}/${PROJECT_NAME}.elf
 BIN_FILE = ${DIR_BUILD}/${PROJECT_NAME}.bin
 
-OVARLAY_ARGS = "EXTRA_C_INCUDES=-I../app" "EXTRA_LDFLAGS=--specs=nosys.specs" "EXTRA_OBJECTS=../app/build/lib_app.a"
+OVARLAY_ARGS = \
+	"OVERLAY_CFLAGS=-DENABLE_APP_OVERLAY" \
+	"OVERLAY_LDFLAGS=--specs=nosys.specs" \
+	"OVERLAY_C_INCUDES=-I../app" \
+	"OVERLAY_OBJECTS=../app/build/lib_app.a"
 
 all: src-make
 
@@ -49,7 +53,7 @@ ${BIN_FILE}: src-make
 
 clean:
 	make -C "${DIR_APP}" clean
-	make -C "${DIR_GENERATED}" -f overlay.mk clean
+	test -f "${DIR_GENERATED}/Makefile" && make -C "${DIR_GENERATED}" -f overlay.mk clean
 
 # ---------------------------------------------------------------------------------------------------------------------
 

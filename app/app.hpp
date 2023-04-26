@@ -1,13 +1,10 @@
 #pragma once
 
 #ifdef __cplusplus
-
-extern "C" void app_init();
-extern "C" void app_loop();
-
+#define APP_EXTERN extern "C"
 #else
-
-extern void app_init();
-extern void app_loop();
-
+#define APP_EXTERN extern
 #endif
+
+APP_EXTERN void app_init();
+APP_EXTERN void app_loop();
