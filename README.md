@@ -23,13 +23,25 @@ Install location must be added to `PATH` or specified by `DIR_CUBE_PROGRAMMER` e
 
 I don't have time to write proper documentation at the moment, the workings can be reverse-engineered from the Makefiles. In the meantime, I recommend [this article](https://www.e-tinkers.com/2022/04/a-better-way-to-setup-stm32cubeide/) whose author probably had similar goals in his mind as me.
 
-## Troubleshooting
+# Troubleshooting
+
+### Symptom
+
+Cube MX generator generates faulty Makefile when switching between boards / MCUs.
+
+#### Solution
+
+- Make sure to start whit the original (as of `main` branch) project.ioc file.
+- Modify config files starting with `Mcu.` only
+- Save file (and preferably make a commit)
+- Open the project in Cube MX, or __re-load it if it's already open__
+- Press _"Generate"_ (and preferably make a commit)
 
 ### Symptom
 
 Error messages referencing USB connection when flashing the device.
 
-### Solution
+#### Solution
 
 ```
 echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", MODE="0666"' | sudo tee /etc/udev/rules.d/70-st-link.rules
