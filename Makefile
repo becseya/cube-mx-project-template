@@ -39,8 +39,8 @@ check-generation:
 # Final linking -------------------------------------------------------------------------------------------------------
 
 app-and-generated: ${FLAG_FW_DOWNLOADED} check-generation
-	make -C "${DIR_APP}"
-	make -C "${DIR_GENERATED}" -f overlay.mk ${OVARLAY_ARGS}
+	@make -C "${DIR_APP}"
+	@make -C "${DIR_GENERATED}" -f overlay.mk ${OVARLAY_ARGS}
 
 ${FINAL_ELF}: app-and-generated
 ${FINAL_BIN}: app-and-generated
