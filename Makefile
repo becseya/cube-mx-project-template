@@ -6,8 +6,7 @@ DIR_ABS = $(shell realpath "$$PWD")
 DIR_GENERATED = generated
 DIR_APP = app
 DIR_TOOLS = tools
-DIR_TOOLCHAINS = ${DIR_TOOLS}/.toolchains
-DIR_FW = ${DIR_TOOLS}/.toolchains/cube-mx-fw
+DIR_TOOLCHAINS ?= ${DIR_TOOLS}/.toolchains
 
 MCU_FAMILY ?= $(shell cat ${DIR_GENERATED}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
 
@@ -33,9 +32,9 @@ TOOLCHAIN_URL = https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-20
 # To be able to update PATH variable, the folder must exists
 $(shell mkdir -p ${DIR_ARM_TOOLCHAIN_RELATIVE})
 # and must be absolute
-TOOLCHAIN = $(shell realpath ${DIR_ARM_TOOLCHAIN_RELATIVE})
+DIR_ARM_TOOLCHAIN = $(shell realpath ${DIR_ARM_TOOLCHAIN_RELATIVE})
 
-export PATH := ${TOOLCHAIN}:${PATH}
+export PATH := ${DIR_ARM_TOOLCHAIN}:${PATH}
 
 ${FLAG_ARM_TOOLCHAIN}:
 	wget -qO- "${TOOLCHAIN_URL}" | tar -xj -C "${DIR_TOOLCHAINS}"
@@ -43,15 +42,17 @@ ${FLAG_ARM_TOOLCHAIN}:
 
 install-arm-toolchain: ${FLAG_ARM_TOOLCHAIN}
 
-# Build utilities -----------------------------------------------------------------------------------------------------
+# Cube MX firmware ------------------------------------------------------------------------------------------..........
 
-FLAG_FW_DOWNLOADED = ${DIR_FW}/.flag-fw-${MCU_FAMILY}-downloaded
+export DIR_CUBE_MX_FW = $(shell realpath "${DIR_TOOLCHAINS}/cube-mx-fw")
+
+FLAG_FW_DOWNLOADED = ${DIR_CUBE_MX_FW}/.flag-fw-${MCU_FAMILY}-downloaded
 
 ${FLAG_FW_DOWNLOADED}:
-	@rm -rf "${DIR_FW}" && mkdir -p "${DIR_FW}"
-	git clone https://github.com/STMicroelectronics/STM32Cube${MCU_FAMILY}.git --depth=1 ${DIR_FW}
-	rm -rf "${DIR_FW}/Projects"
-	rm -rf "${DIR_FW}/.git"
+	@rm -rf "${DIR_CUBE_MX_FW}" && mkdir -p "${DIR_CUBE_MX_FW}"
+	git clone https://github.com/STMicroelectronics/STM32Cube${MCU_FAMILY}.git --depth=1 ${DIR_CUBE_MX_FW}
+	rm -rf "${DIR_CUBE_MX_FW}/Projects"
+	rm -rf "${DIR_CUBE_MX_FW}/.git"
 	touch "${FLAG_FW_DOWNLOADED}"
 
 download-firmware: ${FLAG_FW_DOWNLOADED}
