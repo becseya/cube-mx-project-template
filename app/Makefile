@@ -13,12 +13,9 @@ LD = arm-none-eabi-ld
 
 MCU = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-MCU)
 C_DEFS = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-C_DEFS)
+C_INCLUDES = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-C_INCLUDES)
 
-C_INCLUDES =  \
--I${DIR_GENERATED}/Inc \
--I../cube-mx-fw/Drivers/STM32F1xx_HAL_Driver/Inc \
--I../cube-mx-fw/Drivers/CMSIS/Device/ST/STM32F1xx/Include \
--I../cube-mx-fw/Drivers/CMSIS/Include
+C_INCLUDES := $(subst -IInc,-I../generated/Inc,${C_INCLUDES})
 
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections -fno-exceptions -fno-rtti
 
