@@ -1,25 +1,45 @@
 # User application makefile
 
+DIR_SRC = .
+DIR_BUILD = build
 DIR_GENERATED = ../generated
+DIR_CUBE_FW = ../tools/.toolchains/cube-mx-fw
 
-all: build/lib_app.a
+# Not a real lib, rather a blob of all objects
+APP_LIB = ${DIR_BUILD}/lib_app.a
+
+PP = arm-none-eabi-g++
+LD = arm-none-eabi-ld
 
 MCU = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-MCU)
 C_DEFS = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-C_DEFS)
+C_INCLUDES = $(shell make -C ${DIR_GENERATED} -f overlay.mk --no-print-directory print-C_INCLUDES)
 
-C_INCLUDES =  \
--I${DIR_GENERATED}/Inc \
--I../cube-mx-fw/Drivers/STM32F1xx_HAL_Driver/Inc \
--I../cube-mx-fw/Drivers/CMSIS/Device/ST/STM32F1xx/Include \
--I../cube-mx-fw/Drivers/CMSIS/Include
+C_INCLUDES := $(subst -IInc,-I../generated/Inc,${C_INCLUDES})
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections -fno-exceptions -fno-rtti
 
-build/lib_app.a: Makefile
-	mkdir -p build
-	arm-none-eabi-gcc -c ${CFLAGS} -MMD -MP -MF"build/lib_app.d" -o build/lib_app.a app.cpp
+all: ${APP_LIB}
+
+# -------------------------------------------------------------------------------------------------
+
+SOURCES = $(shell find ${DIR_SRC} -name "*.cpp")
+OBJECTS += $(subst ${DIR_SRC}/,${DIR_BUILD}/,${SOURCES:.cpp=.cpp.o})
+
+${DIR_BUILD}/%.cpp.o: ${DIR_SRC}/%.cpp Makefile
+	mkdir -p $(@D)
+	${PP} -c ${CFLAGS} -MMD -MP -MF"$@.d" -Wa,-a,-ad,-alms="$@.lst" $< -o $@
+
+${APP_LIB}: ${OBJECTS} Makefile
+	@which ${LD}
+	@${LD} --version | head -n 1
+	${LD} -relocatable ${OBJECTS} -o ${APP_LIB}
+
+# -------------------------------------------------------------------------------------------------
 
 clean:
-	rm -rf build
+	rm -rf ${DIR_BUILD}
 
--include build/lib_app.d
+print-%  : ; @echo $($*)
+
+-include $(wildcard $(DIR_BUILD)/*.d)

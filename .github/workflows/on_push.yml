@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - 'example_*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: default
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+# run tests
+    - name: Format check
+      run: |
+        clang-format --version
+        make format-check
+
+# cache related steps
+    - name: Collect environment info
+      id: envInfo
+      run: |
+        echo "MCU_FAMILY=$(make print-MCU_FAMILY)" >> $GITHUB_OUTPUT
+
+    - name: Restore local development tools
+      id: cache-toolchain
+      uses: actions/cache@v3
+      with:
+        path: tools/.toolchains
+        key: cache-toolchains-${{ steps.envInfo.outputs.MCU_FAMILY }}
+    # WARNING: cache must be emptied manually on toolchain update
+
+# install build env
+    - name: Install local development tools
+      if: steps.cache-toolchain.outputs.cache-hit != 'true'
+      run: |
+        make install-arm-toolchain
+        make download-firmware
+
+# build
+    - name: Build
+      run: make
