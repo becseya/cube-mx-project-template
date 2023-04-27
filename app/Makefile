@@ -3,7 +3,7 @@
 DIR_SRC = .
 DIR_BUILD = build
 DIR_GENERATED = ../generated
-DIR_CUBE_FW = ../cube-mx-fw
+DIR_CUBE_FW = ../tools/.toolchains/cube-mx-fw
 
 # Not a real lib, rather a blob of all objects
 APP_LIB = ${DIR_BUILD}/lib_app.a

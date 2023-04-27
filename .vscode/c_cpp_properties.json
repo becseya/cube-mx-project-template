@@ -4,9 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/src/Inc",
-                "${workspaceFolder}/cube-mx-fw/Drivers/**",
-                "${workspaceFolder}/cube-mx-fw/Drivers/CMSIS/Device/ST/**",
-                "${workspaceFolder}/cube-mx-fw/Drivers/CMSIS/Include"
+                "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/**",
+                "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/CMSIS/Device/ST/**",
+                "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/CMSIS/Include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

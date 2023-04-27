@@ -1,6 +1,5 @@
 .mxproject
 .toolchains/
 build/
-cube-mx-fw/
 .vscode/*
 !.vscode/c_cpp_properties.json

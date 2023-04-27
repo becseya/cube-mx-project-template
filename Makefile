@@ -7,7 +7,7 @@ DIR_GENERATED = generated
 DIR_APP = app
 DIR_TOOLS = tools
 DIR_TOOLCHAINS = ${DIR_TOOLS}/.toolchains
-DIR_FW = cube-mx-fw
+DIR_FW = ${DIR_TOOLS}/.toolchains/cube-mx-fw
 
 MCU_FAMILY ?= $(shell cat ${DIR_GENERATED}/${PROJECT_NAME}.ioc | grep -Po '(?<=Family=STM32).+')
 
