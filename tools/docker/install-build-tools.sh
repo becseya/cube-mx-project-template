@@ -2,9 +2,13 @@
 
 set -euxo pipefail
 
-sudo apt-get update
+if [ "$EUID" -ne 0 ]; then
+    exec sudo -s "$0" "$@"
+fi
 
-sudo apt-get install -y \
+apt-get update
+
+apt-get install -y \
     bash-completion \
     make \
     git \

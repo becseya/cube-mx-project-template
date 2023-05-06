@@ -1,7 +1,5 @@
 FROM ubuntu:22.04
 
-RUN apt-get update -y && apt-get install -y sudo
-
 COPY install-build-tools.sh .
 
 RUN ./install-build-tools.sh
