@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/Inc",
+                "${workspaceFolder}/generated/Inc",
                 "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/**",
                 "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/CMSIS/Device/ST/**",
                 "${workspaceFolder}/tools/.toolchains/cube-mx-fw/Drivers/CMSIS/Include"
